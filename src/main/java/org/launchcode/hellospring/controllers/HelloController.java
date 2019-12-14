@@ -1,10 +1,13 @@
 package org.launchcode.hellospring.controllers;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
-@ResponseBody
 public class HelloController {
 
     public static String createMessage(String name, String language) {
@@ -28,39 +31,37 @@ public class HelloController {
 //    }
 
     @GetMapping("goodbye")
+    @ResponseBody
     public String goodbye() {
         return "Goodbye, spring!";
     }
 
-    @PostMapping("hello")
-    public String helloWithQueryParam(@RequestParam String name, @RequestParam String language) {
-        return this.createMessage(name, language);
+    @RequestMapping(value = "hello", method = {RequestMethod.GET, RequestMethod.POST})
+    public String hello(@RequestParam String name, Model model) {
+        String greeting = "Hello, " + name + "!";
+        model.addAttribute("greeting", greeting);
+        return "hello";
     }
 
     @GetMapping("hello/{name}")
+    @ResponseBody
     public String helloWithPathParam(@PathVariable String name) {
         return "Hello, " + name;
     }
 
     @GetMapping
     public String helloForm() {
-        return "<html>" +
-                "<body>" +
-                "<form action='hello' method='post'>" +
-                "<input type='text' name='name'>" +
+        return "form";
+    }
 
-                "<select name='language'>" +
-                "<option value='english'>English</option>" +
-                "<option value='spanish'>Spanish</option>" +
-                "<option value='german'>German</option>" +
-                "<option value='italian'>Italian</option>" +
-                "<option value='french'>French</option>" +
-                "</select>" +
-
-                "<input type='submit' value='Greet Me!'>" +
-                "</form>" +
-                "</body>" +
-                "</html>";
+    @GetMapping("hello-names")
+    public String helloNames(Model model) {
+        List<String> names = new ArrayList<>();
+        names.add("Abigail");
+        names.add("Christian");
+        names.add("Elijah");
+        model.addAttribute("names", names);
+        return "hello-list";
     }
 
 }
